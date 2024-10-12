@@ -11,7 +11,7 @@
 
         if (code) {
             // Отправляем GET-запрос на бэкенд с кодом как параметр URL
-            fetch(`http://127.0.0.1:8000/oauth/auth/google?code=${code}`, {
+            fetch(`https://wallpaper-ai-1.onrender.com/oauth/auth/google?code=${code}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

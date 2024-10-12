@@ -5,17 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OAuth Redirect</title>
     <script>
-        window.onload = function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const code = urlParams.get('code');
-
-            if (code) {
-                const redirectUri = "https://dilshatosmanov.github.io/ai-wallpapers/#/auth"; 
-                window.location.href = `${redirectUri}?code=${code}`;
-            } else {
-                document.getElementById('error').textContent = 'Code not found in URL.';
-            }
-        };
+        fetch('http://127.0.0.1:8000/oauth/auth/google', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ code }), 
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+        })
+        .catch(error => console.error('Ошибка:', error));
     </script>
 </head>
 <body>

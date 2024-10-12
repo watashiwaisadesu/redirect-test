@@ -13,7 +13,6 @@
             // Отправляем GET-запрос на бэкенд с кодом как параметр URL
             fetch(`https://wallpaper-ai-1.onrender.com/oauth/auth/google?code=${code}`, {
                 method: 'GET',
-                mode: 'no-cors',
                 headers: {
                     'Content-Type': 'application/json',
                 }

@@ -5,18 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OAuth Redirect</title>
     <script>
-        fetch('http://127.0.0.1:8000/oauth/auth/google', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ code }), 
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-        })
-        .catch(error => console.error('Ошибка:', error));
+        // Получаем код из URL-параметров
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+
+        if (code) {
+            // Отправляем GET-запрос на бэкенд с кодом как параметр URL
+            fetch(`http://127.0.0.1:8000/oauth/auth/google?code=${code}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                // Здесь вы можете обработать полученные данные, например, сохранить токен
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+                document.getElementById('error').textContent = 'Ошибка получения данных с сервера.';
+            });
+        } else {
+            document.getElementById('error').textContent = 'Код аутентификации не найден.';
+        }
     </script>
 </head>
 <body>

@@ -3,36 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OAuth Redirect</title>
-    <script>
-        // Получаем код из URL-параметров
-        const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code');
-
-        if (code) {
-            // Отправляем GET-запрос на бэкенд с кодом как параметр URL
-            fetch(`http://127.0.0.1:8000/oauth/auth/google?code=${code}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                // Здесь вы можете обработать полученные данные, например, сохранить токен
-            })
-            .catch(error => {
-                console.error('Ошибка:', error);
-                document.getElementById('error').textContent = 'Ошибка получения данных с сервера.';
-            });
-        } else {
-            document.getElementById('error').textContent = 'Код аутентификации не найден.';
-        }
-    </script>
+    <title>Wallpaper Fetcher</title>
 </head>
 <body>
-    <h1>Redirecting...</h1>
-    <p id="error" style="color: red;"></p>
+    <h1>Fetch Wallpapers</h1>
+    <form id="wallpaperForm">
+        <label for="pageNumber">Page Number:</label>
+        <input type="number" id="pageNumber" name="pageNumber" min="1" value="1" required>
+        <button type="submit">Fetch Wallpapers</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        // Define the URL and token
+        const url = "https://wallpaper-ai-3m94.onrender.com/products/leroymerlin/wallpapers";
+        const authToken = "your-auth-token";  // Replace with your actual auth token
+
+        // Function to fetch wallpapers
+        async function fetchWallpapers(pageNumber) {
+            try {
+                // Make the POST request
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}` // Add the Authorization header
+                    },
+                    body: JSON.stringify({ page: pageNumber }) // Send the page number in JSON
+                });
+
+                // Check if the response is OK
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                // Parse the JSON response
+                const data = await response.json();
+                displayResults(data); // Call function to display results
+            } catch (error) {
+                console.error("Error fetching wallpapers:", error);
+                document.getElementById("result").innerText = "Error fetching wallpapers.";
+            }
+        }
+
+        // Function to display the results
+        function displayResults(data) {
+            const resultDiv = document.getElementById("result");
+            resultDiv.innerHTML = ""; // Clear previous results
+
+            if (data.length === 0) {
+                resultDiv.innerText = "No wallpapers found.";
+                return;
+            }
+
+            data.forEach(wallpaper => {
+                const img = document.createElement("img");
+                img.src = wallpaper.image_url; // Assuming the image URL is in the response
+                img.alt = wallpaper.product_name; // Assuming there's a product name
+                img.style.width = "200px"; // Set a width for the images
+                resultDiv.appendChild(img);
+            });
+        }
+
+        // Event listener for form submission
+        document.getElementById("wallpaperForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent the default form submission
+            const pageNumber = document.getElementById("pageNumber").value; // Get page number from input
+            fetchWallpapers(pageNumber); // Call the fetch function
+        });
+    </script>
 </body>
 </html>

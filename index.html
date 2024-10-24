@@ -8,6 +8,9 @@
 <body>
     <h1>Fetch Wallpapers</h1>
     <form id="wallpaperForm">
+        <label for="token">Bearer Token:</label>
+        <input type="text" id="token" name="token" required placeholder="Enter your bearer token">
+        <br>
         <label for="pageNumber">Page Number:</label>
         <input type="number" id="pageNumber" name="pageNumber" min="1" value="1" required>
         <button type="submit">Fetch Wallpapers</button>
@@ -15,12 +18,11 @@
     <div id="result"></div>
 
     <script>
-        // Define the URL and token
+        // Define the URL
         const url = "https://wallpaper-ai-3m94.onrender.com/products/leroymerlin/wallpapers";
-        const authToken = "your-auth-token";  // Replace with your actual auth token
 
         // Function to fetch wallpapers
-        async function fetchWallpapers(pageNumber) {
+        async function fetchWallpapers(pageNumber, authToken) {
             try {
                 // Make the POST request
                 const response = await fetch(url, {
@@ -69,7 +71,8 @@
         document.getElementById("wallpaperForm").addEventListener("submit", function(event) {
             event.preventDefault(); // Prevent the default form submission
             const pageNumber = document.getElementById("pageNumber").value; // Get page number from input
-            fetchWallpapers(pageNumber); // Call the fetch function
+            const authToken = document.getElementById("token").value; // Get bearer token from input
+            fetchWallpapers(pageNumber, authToken); // Call the fetch function
         });
     </script>
 </body>
